@@ -1,0 +1,47 @@
+{
+  "type": "component",
+  "metadata": {},
+  "schema": {
+    "name": "hierarchy-chart",
+    "friendlyName": "hierarchy-chart",
+    "description": "An amazing Budibase component!",
+    "icon": "Text",
+    "settings": [
+      {
+        "type": "dataSource/filterable",
+        "key": "dataProvider",
+        "label": "Provider",
+        "required": true
+      },
+      {
+        "type": "field",
+        "label": "Title column",
+        "key": "titleColumn",
+        "dependsOn": "dataProvider",
+        "options": {
+          "source": "columns",
+          "from": "provider"
+        }
+      },
+      {
+        "type": "field",
+        "label": "Subtitle column",
+        "key": "subtitleColumn",
+        "dependsOn": "dataProvider"
+      },
+      {
+        "type": "field",
+        "label": "Image column",
+        "key": "imageColumn",
+        "dependsOn": "dataProvider"
+      },
+      {
+        "type": "field",
+        "label": "child column",
+        "key": "childColumn",
+        "dependsOn": "dataProvider"
+      }
+      
+    ]
+  }
+}

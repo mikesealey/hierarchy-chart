@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    #svg-tree {
+      /* Ensure container has size */
+      width: 700px;
+      height: 700px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Hello Chart</h2>
+  <div id="svg-tree"></div>
+
+  <!-- Load ApexTree library FIRST -->
+  <script src="https://cdn.jsdelivr.net/npm/apextree"></script>
+
+  <script>
+    window.onload = () => {
+      const data = {
+        "id": "idA",
+        "name": "A",
+        "children": [
+          {
+            "id": "idB",
+            "name": "B",
+            "children": [
+              { "id": "idC", "name": "C" },
+              { "id": "idD", "name": "D" }
+            ]
+          }
+        ]
+      };
+
+      const options = {
+        width: 700,
+        height: 700,
+        nodeWidth: 120,
+        nodeHeight: 80,
+        childrenSpacing: 100,
+        siblingSpacing: 30,
+        direction: 'top',
+        canvasStyle: 'border: 1px solid black; background: #f6f6f6;',
+      };
+
+      const tree = new ApexTree(document.getElementById('svg-tree'), options);
+      tree.render(data);
+    };
+  </script>
+</body>
+</html>
