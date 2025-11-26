@@ -116,3 +116,7 @@
 <style>
 
 </style>
+
+<!-- TODO:
+Find a grownup who can help me select columns to behave as Title, Subtitle, Image, Child. 
+-->

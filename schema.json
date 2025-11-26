@@ -19,7 +19,7 @@
         "key": "titleColumn",
         "dependsOn": "dataProvider",
         "options": {
-          "source": "columns",
+          "source": "dataProvider",
           "from": "provider"
         }
       },
@@ -33,13 +33,15 @@
         "type": "field",
         "label": "Image column",
         "key": "imageColumn",
-        "dependsOn": "dataProvider"
+        "dependsOn": "dataProvider",
+        "info": "Can be a text column as a URL for an image, or a single-attachment column that holds images"
       },
       {
         "type": "field",
-        "label": "child column",
-        "key": "childColumn",
-        "dependsOn": "dataProvider"
+        "label": "Parent column",
+        "key": "reportsToColumn",
+        "dependsOn": "dataProvider",
+        "info": "Must be a relationship column. Will use the first related row as a parent-node"
       }
       
     ]
