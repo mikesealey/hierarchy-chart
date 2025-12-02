@@ -137,7 +137,8 @@
       const text1 = getCell(row, text1Column) ?? "";
       const text2 = getCell(row, text2Column) ?? "";
       const text3 = getCell(row, text3Column) ?? "";
-      const imageURL = normaliseImage(getCell(row, imageColumn));
+      const rawImage = getCell(row, imageColumn);
+      const imageURL = typeof rawImage === "string" ? rawImage : normaliseImage(rawImage);
       if (selfRelKey) {
         const selfRelVal = getCell(row, selfRelKey);
         const externalId = getFirstRelId(selfRelVal);
