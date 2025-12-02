@@ -70,24 +70,26 @@
       {
         "type": "number",
         "label": "Card width",
-        "key": "cardWidth"
+        "key": "cardWidth",
+        "defaultValue": 180
       },
       {
         "type": "number",
         "label": "Card height",
-        "key": "cardHeight"
+        "key": "cardHeight",
+        "defaultValue": 240
       },
       {
         "type": "number",
         "label": "Sibling spacing",
         "key": "siblingSpacing",
-        "default": 40
+        "defaultValue": 40
       },
       {
         "type": "number",
         "label": "Children spacing",
         "key": "childrenSpacing",
-        "default": 80
+        "defaultValue": 80
       }
     ]
   }

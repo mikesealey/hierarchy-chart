@@ -1,5 +1,5 @@
 <script>
-  import { getContext, onMount } from "svelte";
+  import { getContext, onDestroy } from "svelte";
   import ApexTree from "apextree";
 
   const { styleable } = getContext("sdk");
@@ -17,11 +17,37 @@
   export let cardWidth;
   export let cardHeight;
   export let siblingSpacing;
-  export let childrenSpacing
+  export let childrenSpacing;
 
-  console.log(dataProvider)
+  console.log("Data Provider", dataProvider)
+  console.log("image column", imageColumn)
+  console.log("reportsToColumn", reportsToColumn)
 
-  const options = {
+  // Node template used by ApexTree
+  function nodeTemplate(content) {
+    const text1 = content.text1 || "";
+    const text2 = content.text2 || "";
+    const text3 = content.text3 || "";
+    const img = content.imageURL || "";
+
+    return `
+      <div class="card">
+
+        ${img
+          ? `<img class="card-img" src="${img}"/>`
+          : ``}
+
+        <div class="card-text-1">${text1}</div>
+        <div class="card-text-2">${text2}</div>
+        <div class="card-text-3">${text3}</div>
+
+      </div>
+    `;
+  }
+
+  // Make options reactive so changes are picked up on remount
+  let options;
+  $: options = {
     height: 800,
     width: 1000,
     nodeWidth: cardWidth,
@@ -29,32 +55,11 @@
     childrenSpacing,
     siblingSpacing,
     direction: "top",
-
-    // Required: determines what object is passed into nodeTemplate
     contentKey: "data",
+    nodeTemplate,
+    canvasStyle: "border: 1px solid #ccc;",
+    borderRadius: "15px"
 
-    nodeTemplate: (content) => {
-      const text1 = content.text1 || "";
-      const text2 = content.text2 || "";
-      const text3 = content.text3 || "";
-      const img = content.imageURL || "";
-
-      return `
-        <div class="org-node" style="align-items: justify-content">
-
-          ${img
-            ? `<img class="org-node-img" src="${img}" style="width: auto; height: 50%; "/>`
-            : ``}
-
-          <div class="org-node-name">${text1}</div>
-          <div class="org-node-role">${text2}</div>
-          <div class="org-node-dept">${text3}</div>
-
-        </div>
-      `;
-    },
-
-    canvasStyle: "border: 1px solid #ccc; background: #f6f6f6;"
   };
 
   function getCell(row, key) {
@@ -129,8 +134,6 @@
     const externalIdToRowId = {};
     const selfRelKey = detectSelfRelationKey(rows, reportsToColumn);
     rows.forEach(row => {
-      console.log("HERE", getCell(row, text2Column))
-      console.log("HERE", getCell(row, text3Column))
       const text1 = getCell(row, text1Column) ?? "";
       const text2 = getCell(row, text2Column) ?? "";
       const text3 = getCell(row, text3Column) ?? "";
@@ -190,47 +193,87 @@
 
   let tree;
 
-  onMount(() => {
-    tree = new ApexTree(container, options);
-    const orgObject = buildOrgTree(records?.rows || dataProvider?.rows || []);
-    if (orgObject) {
-      tree.render(orgObject);
-    }
-  });
-
-  // Track dependencies to trigger re-render on any relevant change
-  let _deps;
-  $: _deps = [
+  // Separate dependencies for data and layout
+  let dataDeps;
+  $: dataDeps = [
     records,
     dataProvider,
     text1Column,
     text2Column,
     text3Column,
     imageColumn,
-    reportsToColumn,
+    reportsToColumn
+  ];
+
+  // Key used to force remount when layout-affecting props change
+  let layoutKey;
+  $: layoutKey = JSON.stringify([
     cardWidth,
     cardHeight,
     siblingSpacing,
     childrenSpacing
-  ];
+  ]);
 
-  // Re-render when inputs change
-  $: if (tree && _deps) {
+  // Initialize ApexTree whenever the container is (re)created
+  $: if (container) {
+    tree?.destroy?.();
+    tree = new ApexTree(container, options);
     const orgObject = buildOrgTree(records?.rows || dataProvider?.rows || []);
     if (orgObject) {
       tree.render(orgObject);
     }
   }
+
+  // Re-render data when inputs change without full remount
+  $: if (tree && dataDeps) {
+    const orgObject = buildOrgTree(records?.rows || dataProvider?.rows || []);
+    if (orgObject) {
+      tree.render(orgObject);
+    }
+  }
+
+  onDestroy(() => {
+    tree?.destroy?.();
+  });
 </script>
 
 <div use:styleable={$component.styles}>
-  <div bind:this={container}></div>
+  {#key layoutKey}
+    <div bind:this={container}></div>
+  {/key}
 </div>
 
 <style>
-.org-node-img {
-  border: 3px solid red;
-}
+  :global(.apextree-node){
+    border: none !important;
+  }
+
+  :global(.card) {
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 10px
+  }
+  :global(.card-img) {
+
+    border-radius: 5px;
+    object-fit: cover;
+    width: auto;
+    height: 65%;
+  }
+
+  :global(.card-text-1) {
+    font-size: large;
+  }
+
+  :global(.card-text-2) {
+    font-size: medium;
+  }
+
+  :global(.card-text-3) {
+    font-size: small;
+  }
+
 </style>
-
-
