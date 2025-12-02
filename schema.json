@@ -8,46 +8,50 @@
     "icon": "Text",
     "settings": [
       {
-        "type": "dataSource",
-        "key": "provider",
-        "label": "Provider (columns)",
-        "required": true
-      },
-      {
-        "type": "dataSource/filterable",
-        "key": "records",
-        "label": "Records",
-        "dependsOn": "provider",
-        "options": {
-          "source": "provider"
-        },
+        "type": "dataProvider",
+        "label": "Provider",
+        "key": "dataProvider",
         "required": true
       },
       {
         "type": "field",
-        "label": "Title column",
-        "key": "titleColumn",
-        "dependsOn": "provider",
+        "label": "Text 1 column",
+        "key": "text1Column",
+        "dependsOn": "dataProvider",
         "options": {
-          "source": "provider"
+          "source": "dataProvider",
+          "from": "provider"
+        },
+        "resetOn": "dataProvider"
+      },
+      {
+        "type": "field",
+        "label": "Text 2 column",
+        "key": "text2Column",
+        "dependsOn": "dataProvider",
+        "options": {
+          "source": "dataProvider",
+          "from": "provider"
         }
       },
       {
         "type": "field",
-        "label": "Subtitle column",
-        "key": "subtitleColumn",
-        "dependsOn": "provider",
+        "label": "Text 3 column",
+        "key": "text3Column",
+        "dependsOn": "dataProvider",
         "options": {
-          "source": "provider"
+          "source": "dataProvider",
+          "from": "provider"
         }
       },
       {
         "type": "field",
         "label": "Image column",
         "key": "imageColumn",
-        "dependsOn": "provider",
+        "dependsOn": "dataProvider",
         "options": {
-          "source": "provider"
+          "source": "dataProvider",
+          "from": "provider"
         },
         "info": "Can be a text column as a URL for an image, or a single-attachment column that holds images"
       },
@@ -55,9 +59,10 @@
         "type": "field",
         "label": "Parent column",
         "key": "reportsToColumn",
-        "dependsOn": "provider",
+        "dependsOn": "dataProvider",
         "options": {
-          "source": "provider"
+          "source": "dataProvider",
+          "from": "provider"
         },
         "info": "Must be a relationship column. Will use the first related row as a parent-node"
       }

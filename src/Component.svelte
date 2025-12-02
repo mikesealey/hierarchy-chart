@@ -7,13 +7,15 @@
   let container;
 
   // Settings from schema
-  export let provider; // non-filterable (for columns only)
-  export let records;  // filterable (has .rows)
-  export let dataProvider; // legacy: if using single filterable key
-  export let titleColumn; // string column key
-  export let subtitleColumn; // string column key
-  export let imageColumn; // string column key (text URL or attachment)
-  export let reportsToColumn; // string column key (relationship)
+  export let records;
+  export let dataProvider;
+  export let text1Column;
+  export let text2Column;
+  export let text3Column;
+  export let imageColumn;
+  export let reportsToColumn;
+
+  console.log(dataProvider)
 
   const options = {
     height: 800,
@@ -28,21 +30,21 @@
     contentKey: "data",
 
     nodeTemplate: (content) => {
-      const name = content.name || "";
-      const role = content.role || "";
-      const dept = content.department || "";
+      const text1 = content.text1 || "";
+      const text2 = content.text2 || "";
+      const text3 = content.text3 || "";
       const img = content.imageURL || "";
 
       return `
         <div class="org-node" style="align-items: justify-content">
 
           ${img
-            ? `<img class="org-node-img" src="${img}" style="width: 60px; height: 60px"/>`
+            ? `<img class="org-node-img" src="${img}" style="width: 60px; height: auto; "/>`
             : ``}
 
-          <div class="org-node-name">${name}</div>
-          <div class="org-node-role">${role}</div>
-          <div class="org-node-dept">${dept}</div>
+          <div class="org-node-name">${text1}</div>
+          <div class="org-node-role">${text2}</div>
+          <div class="org-node-dept">${text3}</div>
 
         </div>
       `;
@@ -123,8 +125,11 @@
     const externalIdToRowId = {};
     const selfRelKey = detectSelfRelationKey(rows, reportsToColumn);
     rows.forEach(row => {
-      const name = getCell(row, titleColumn) ?? "";
-      const role = getCell(row, subtitleColumn) ?? "";
+      console.log("HERE", getCell(row, text2Column))
+      console.log("HERE", getCell(row, text3Column))
+      const text1 = getCell(row, text1Column) ?? "";
+      const text2 = getCell(row, text2Column) ?? "";
+      const text3 = getCell(row, text3Column) ?? "";
       const imageURL = normaliseImage(getCell(row, imageColumn));
       if (selfRelKey) {
         const selfRelVal = getCell(row, selfRelKey);
@@ -138,8 +143,9 @@
         id: row._id,
         data: {
           id: row._id,
-          name,
-          role,
+          text1,
+          text2,
+          text3,
           imageURL
         },
         options: {},
@@ -190,7 +196,7 @@
 
   // Track dependencies to trigger re-render on any relevant change
   let _deps;
-  $: _deps = [records, dataProvider, titleColumn, subtitleColumn, imageColumn, reportsToColumn];
+  $: _deps = [records, dataProvider, text1Column, text2Column, reportsToColumn];
 
   // Re-render when inputs change
   $: if (tree && _deps) {
@@ -206,9 +212,9 @@
 </div>
 
 <style>
-
+.org-node-img {
+  border: 3px solid red;
+}
 </style>
 
-<!-- TODO:
-Find a grownup who can help me select columns to behave as Title, Subtitle, Image, Child. 
--->
+
