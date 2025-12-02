@@ -14,16 +14,20 @@
   export let text3Column;
   export let imageColumn;
   export let reportsToColumn;
+  export let cardWidth;
+  export let cardHeight;
+  export let siblingSpacing;
+  export let childrenSpacing
 
   console.log(dataProvider)
 
   const options = {
     height: 800,
     width: 1000,
-    nodeWidth: 150,
-    nodeHeight: 120,
-    childrenSpacing: 80,
-    siblingSpacing: 40,
+    nodeWidth: cardWidth,
+    nodeHeight: cardHeight,
+    childrenSpacing,
+    siblingSpacing,
     direction: "top",
 
     // Required: determines what object is passed into nodeTemplate
@@ -39,7 +43,7 @@
         <div class="org-node" style="align-items: justify-content">
 
           ${img
-            ? `<img class="org-node-img" src="${img}" style="width: 60px; height: auto; "/>`
+            ? `<img class="org-node-img" src="${img}" style="width: auto; height: 50%; "/>`
             : ``}
 
           <div class="org-node-name">${text1}</div>
@@ -196,7 +200,19 @@
 
   // Track dependencies to trigger re-render on any relevant change
   let _deps;
-  $: _deps = [records, dataProvider, text1Column, text2Column, reportsToColumn];
+  $: _deps = [
+    records,
+    dataProvider,
+    text1Column,
+    text2Column,
+    text3Column,
+    imageColumn,
+    reportsToColumn,
+    cardWidth,
+    cardHeight,
+    siblingSpacing,
+    childrenSpacing
+  ];
 
   // Re-render when inputs change
   $: if (tree && _deps) {

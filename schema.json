@@ -65,8 +65,30 @@
           "from": "provider"
         },
         "info": "Must be a relationship column. Will use the first related row as a parent-node"
-      }
+      },
       
+      {
+        "type": "number",
+        "label": "Card width",
+        "key": "cardWidth"
+      },
+      {
+        "type": "number",
+        "label": "Card height",
+        "key": "cardHeight"
+      },
+      {
+        "type": "number",
+        "label": "Sibling spacing",
+        "key": "siblingSpacing",
+        "default": 40
+      },
+      {
+        "type": "number",
+        "label": "Children spacing",
+        "key": "childrenSpacing",
+        "default": 80
+      }
     ]
   }
 }
