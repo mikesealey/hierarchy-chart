@@ -166,7 +166,8 @@
     rows.forEach(row => {
       const node = nodes[row._id];
       const relVal = getCell(row, reportsToColumn);
-      const parentRefId = getFirstRelId(relVal);
+      // Allow relationship column to be either a string id or a relationship value
+      const parentRefId = typeof relVal === "string" ? relVal : getFirstRelId(relVal);
       // Resolve parent: prefer direct same-table id, else map via externalIdToRowId
       let parentRowId = parentRefId;
       if (parentRowId && !nodes[parentRowId] && externalIdToRowId[parentRowId]) {
