@@ -4,8 +4,8 @@
   "schema": {
     "name": "hierarchy-chart",
     "friendlyName": "hierarchy-chart",
-    "description": "An amazing Budibase component!",
-    "icon": "Text",
+    "description": "A hierarchy chart (aka Tree Chart) that can be used to show the hierarchy of a business or department.",
+    "icon": "tree-structure",
     "settings": [
       {
         "type": "dataProvider",
@@ -72,6 +72,10 @@
         "key": "topOfTree"
       },
       {
+        "section": true,
+        "name": "Layout",
+        "settings": [
+{
         "type": "number",
         "label": "Card width",
         "key": "cardWidth",
@@ -95,6 +99,9 @@
         "key": "childrenSpacing",
         "defaultValue": 80
       }
+        ]
+      }
+      
     ]
   }
 }

@@ -130,23 +130,16 @@
       return null;
     }
 
-    // Index rows and detect self relationship key for cross-table mapping
-    const rowsById = {};
-    rows.forEach(r => (rowsById[r?._id] = r));
+    // Build node map
+    const nodes = {};
     const externalIdToRowId = {};
     const selfRelKey = detectSelfRelationKey(rows, reportsToColumn);
-
-    // Prepare node content but don't link yet
-    const nodeDataById = {};
     rows.forEach(row => {
       const text1 = getCell(row, text1Column) ?? "";
       const text2 = getCell(row, text2Column) ?? "";
       const text3 = getCell(row, text3Column) ?? "";
       const rawImage = getCell(row, imageColumn);
       const imageURL = typeof rawImage === "string" ? rawImage : normaliseImage(rawImage);
-
-      nodeDataById[row._id] = { id: row._id, text1, text2, text3, imageURL };
-
       if (selfRelKey) {
         const selfRelVal = getCell(row, selfRelKey);
         const externalId = getFirstRelId(selfRelVal);
@@ -154,74 +147,56 @@
           externalIdToRowId[externalId] = row._id;
         }
       }
+
+      nodes[row._id] = {
+        id: row._id,
+        data: {
+          id: row._id,
+          text1,
+          text2,
+          text3,
+          imageURL
+        },
+        options: {},
+        children: []
+      };
     });
 
-    // Compute parent relationships for each row
-    const parentOf = {};
+    // Link children to parents via selected relationship column
+    let root = null;
     rows.forEach(row => {
+      const node = nodes[row._id];
       const relVal = getCell(row, reportsToColumn);
+      // Allow relationship column to be either a string id or a relationship value
       const parentRefId = typeof relVal === "string" ? relVal : getFirstRelId(relVal);
-      let parentRowId = parentRefId;
       // Resolve parent: prefer direct same-table id, else map via externalIdToRowId
-      if (parentRowId && !rowsById[parentRowId] && externalIdToRowId[parentRowId]) {
+      let parentRowId = parentRefId;
+      if (parentRowId && !nodes[parentRowId] && externalIdToRowId[parentRowId]) {
         parentRowId = externalIdToRowId[parentRowId];
       }
-      if (parentRowId && parentRowId !== row._id) {
-        parentOf[row._id] = parentRowId;
+
+      if (parentRowId && nodes[parentRowId] && parentRowId !== row._id) {
+        nodes[parentRowId].children.push(node);
+      } else if (!parentRefId) {
+        // No parent — treat as root (keep first one)
+        if (!root) root = node;
       }
     });
 
-    // Invert to children map
-    const childrenById = {};
-    Object.entries(parentOf).forEach(([childId, parentId]) => {
-      if (!childrenById[parentId]) childrenById[parentId] = [];
-      childrenById[parentId].push(childId);
-    });
-
-    // Determine root id
-    let rootId = null;
-    if (topOfTree && rowsById[topOfTree]) {
-      rootId = topOfTree;
-    } else {
-      // Find any id that is not a child
-      const childIds = new Set(Object.keys(parentOf));
-      rootId = rows.find(r => !childIds.has(r._id))?._id || rows[0]._id;
+    // If a specific top-of-tree node is provided, use it as root
+    if (topOfTree && nodes[topOfTree]) {
+      root = nodes[topOfTree];
     }
 
-    // If topOfTree is set, restrict to its descendants only
-    const allowed = new Set();
-    const stack = [];
-    if (rootId) {
-      allowed.add(rootId);
-      stack.push(rootId);
-    }
-    while (stack.length) {
-      const current = stack.pop();
-      const kids = childrenById[current] || [];
-      for (const cid of kids) {
-        if (!allowed.has(cid)) {
-          allowed.add(cid);
-          stack.push(cid);
-        }
-      }
+    // If we never found an explicit root, pick any top-level node
+    if (!root) {
+      // Find a node that is not a child of any other
+      const childIds = new Set();
+      Object.values(nodes).forEach(n => n.children.forEach(c => childIds.add(c.id)));
+      root = Object.values(nodes).find(n => !childIds.has(n.id)) || Object.values(nodes)[0];
     }
 
-    // Build nodes only for allowed set and link
-    const nodes = {};
-    allowed.forEach(id => {
-      const data = nodeDataById[id] || { id };
-      nodes[id] = { id, data, options: {}, children: [] };
-    });
-    allowed.forEach(pid => {
-      const kids = childrenById[pid] || [];
-      kids.forEach(cid => {
-        if (allowed.has(cid)) {
-          nodes[pid].children.push(nodes[cid]);
-        }
-      });
-    });
-
-    return nodes[rootId] || null;
+    return root;
   }
 
   let tree;
