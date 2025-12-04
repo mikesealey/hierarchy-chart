@@ -33,15 +33,16 @@
 
     return `
       <div class="card">
-
+        <div class="img-container">
         ${img
           ? `<img class="card-img" src="${img}"/>`
           : ``}
-
-        <div class="card-text-1">${text1}</div>
-        <div class="card-text-2">${text2}</div>
-        <div class="card-text-3">${text3}</div>
-
+        </div>
+        <div class="text-container">
+          <div class="card-text-1">${text1}</div>
+          <div class="card-text-2">${text2}</div>
+          <div class="card-text-3">${text3}</div>
+        </div>
       </div>
     `;
   }
@@ -263,14 +264,22 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
-    padding: 10px
+    padding: 10px;
+  }
+
+  :global(.img-container) {
+    height: 65%;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
   }
   :global(.card-img) {
-
-    border-radius: 5px;
     object-fit: cover;
-    width: auto;
-    height: 65%;
+    width: 100%;
+    height: 100%
+  }
+
+  :global(.text-container) {
+    height: 35%;
   }
 
   :global(.card-text-1) {
