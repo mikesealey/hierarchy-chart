@@ -55,4 +55,4 @@ Next, you'll be able to set up to three columns to show information, `Text Colum
 
 The important part here is the `Parent Column` - this determines which rows in the table should appear as children of other rows. The head of the tree is, by default, set to be the row that does not have a value saved in "Parent Column" (ie does not report to anyone).
 
-You may also wish to set `Top of Tree`, though it is not required. This field should also take a row `_id`, and will set that row as the head of the tree. This could be useful to take the entire table but pass in a state variable or URL parameter to show the structure of a specific department.
+You may also wish to set `Top of Tree`, though it is not required. This field should also take a row `_id`, and will set that row as the head of the tree. This could be useful to take the entire table but pass in a state variable or URL parameter to show the structure of a specific department. This can also take bindings, meaning you could set this value using State or Clicked-row.
