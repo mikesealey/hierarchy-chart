@@ -1,6 +1,8 @@
 # Hierarchy-chart
 This is a Budibase custom component plugin that uses the ApexCharts Tree Chart.
 
+![alt text](image-5.png)
+
 ## Instructions
 
 To build your new  plugin run the following in your Budibase CLI:
